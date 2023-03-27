@@ -3,11 +3,11 @@ package main
 // http.FileServer(http.Dir("D:\\desktop2\\GoProjects\\web\\frontend"))
 
 import (
-	"net/http"
-	"log"
-	"web/api"
-	"web/DBconnection"
 	"fmt"
+	"log"
+	"net/http"
+	"web/DBconnection"
+	"web/api"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 	log.Println("Listening and serving on 127.0.0.1:8080")
 
 	router := http.NewServeMux()
-	fileserver := http.FileServer(http.Dir("D:\\desktop2\\GoProjects\\web\\static"))
+	fileserver := http.FileServer(http.Dir("D:\\Projects\\IVANLAVR\\kursach\\static"))
 	router.Handle("/static/", http.StripPrefix("/static", fileserver))
 
 	// root endoint
