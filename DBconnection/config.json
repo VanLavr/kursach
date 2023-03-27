@@ -1,0 +1,7 @@
+{
+    "User" : "root",
+    "Password" : "12345",
+    "NetworkConnection" : "tcp",
+    "Address" : "127.0.0.1:3306",
+    "Name" : "crud1"
+}
