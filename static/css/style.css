@@ -1,3 +1,27 @@
+html{
+    font-size: 3vw;
+}
+
 .first {
-    background-color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    font-size: 1rem;
+    background: url("https://upload.wikimedia.org/wikipedia/ru/0/02/%D0%93%D0%B0%D1%87%D0%B8%D0%BC%D1%83%D1%87%D0%B8.jpg") center center;
+    color: white;
+    height: 550px;
+}
+
+.first__button {
+    background-color: white;
+    border: 2px solid black;
+    padding: 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: opacity .3s linear;
+}
+
+.first__button:hover {
+    opacity: .5;
 }

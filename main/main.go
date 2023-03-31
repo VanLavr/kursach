@@ -25,6 +25,8 @@ func main() {
 	router.HandleFunc("/", api.GetRoot)
 	// hello endpoit
 	router.HandleFunc("/hello", api.GetHello)
+	// get all endpoint
+	router.HandleFunc("/all", api.GetAll)
 
 	serverError := http.ListenAndServe(":8080", router)
 	if serverError != nil {
