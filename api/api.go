@@ -21,7 +21,7 @@ func GetHello(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("|handled \"hello\"| |request=GET| |status: %v|", http.StatusOK)
 
-	page, parseError := template.ParseFiles(configs.PathForLogNikita)
+	page, parseError := template.ParseFiles(configs.PathForLogIvan)
 	if parseError != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(parseError.Error()))
@@ -39,7 +39,7 @@ func GetRoot(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("|handled \"root\"| |request=GET| |status: %v|", http.StatusOK)
 
-	page, parseError := template.ParseFiles(configs.PathForHomeNikita)
+	page, parseError := template.ParseFiles(configs.PathForHomeIvan)
 	if parseError != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(parseError.Error()))

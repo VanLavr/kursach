@@ -2,7 +2,7 @@ package configs
 
 const (
 	// My paths
-	PathForHelloIvan      string = "D:\\desktop2\\GoProjects\\web\\static\\html\\hello.html"
+	PathForLogIvan        string = "D:\\desktop2\\GoProjects\\web\\static\\html\\log.html"
 	PathForHomeIvan       string = "D:\\desktop2\\GoProjects\\web\\static\\html\\home.html"
 	PathForDBConfigIvan   string = "D:\\desktop2\\GoProjects\\web\\DBconnection\\config.json"
 	PathForFileServerIvan string = "D:\\desktop2\\GoProjects\\web\\static"
