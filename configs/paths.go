@@ -8,7 +8,7 @@ const (
 	PathForFileServerIvan string = "D:\\desktop2\\GoProjects\\web\\static"
 
 	// Your paths
-	PathForHelloNikita      string = "D:\\Projects\\IVANLAVR\\kursach\\static\\html\\hello.html"
+	PathForLogNikita        string = "D:\\Projects\\IVANLAVR\\kursach\\static\\html\\log.html"
 	PathForHomeNikita       string = "D:\\Projects\\IVANLAVR\\kursach\\static\\html\\home.html"
 	PathForDBConfigNikita   string = "D:\\Projects\\IVANLAVR\\kursach\\DBconnection\\config.json"
 	PathForFileServerNikita string = "D:\\Projects\\IVANLAVR\\kursach\\static"

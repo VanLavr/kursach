@@ -17,7 +17,7 @@ var (
 )
 
 func Connect() {
-	content, errcon := ioutil.ReadFile(configs.PathForDBConfigIvan)
+	content, errcon := ioutil.ReadFile(configs.PathForDBConfigNikita)
 	if errcon != nil {
 		log.Fatal(errcon.Error())
 	}
