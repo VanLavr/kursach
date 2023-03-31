@@ -1,9 +1,11 @@
 package api
 
 import (
-	"net/http"
+	"encoding/json"
 	"html/template"
 	"log"
+	"net/http"
+	"web/DBconnection"
 )
 
 func GetHello(w http.ResponseWriter, r *http.Request) {
@@ -17,6 +19,8 @@ func GetHello(w http.ResponseWriter, r *http.Request) {
 
 	page, parseError := template.ParseFiles("D:\\desktop2\\GoProjects\\web\\static\\html\\hello.html")
 	if parseError != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(parseError.Error()))
 		log.Fatal(parseError.Error())
 	}
 	page.Execute(w, nil)
@@ -33,7 +37,29 @@ func GetRoot(w http.ResponseWriter, r *http.Request) {
 
 	page, parseError := template.ParseFiles("D:\\desktop2\\GoProjects\\web\\static\\html\\home.html")
 	if parseError != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(parseError.Error()))
 		log.Fatal(parseError.Error())
 	}
 	page.Execute(w, nil)
+}
+
+func GetAll(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	if r.URL.Path != "/all" {
+		log.Printf("|handled \"all\"| |request=GET| |status: %v|", http.StatusNotFound)
+		http.NotFound(w, r)
+		return
+	}
+
+	log.Printf("|handled \"all\"| |request=GET| |status: %v|", http.StatusOK)
+
+	catalog, catErr := DBconnection.GetAllProducts()
+	if catErr != nil {
+		log.Printf("[api/GetAll] cannot get all products (%v)", catErr)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(catErr.Error()))
+	}
+	json.NewEncoder(w).Encode(catalog)
 }

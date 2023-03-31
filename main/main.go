@@ -3,11 +3,11 @@ package main
 // http.FileServer(http.Dir("D:\\desktop2\\GoProjects\\web\\frontend"))
 
 import (
-	"net/http"
-	"log"
-	"web/api"
-	"web/DBconnection"
 	"fmt"
+	"log"
+	"net/http"
+	"web/DBconnection"
+	"web/api"
 )
 
 func main() {
@@ -25,6 +25,8 @@ func main() {
 	router.HandleFunc("/", api.GetRoot)
 	// hello endpoit
 	router.HandleFunc("/hello", api.GetHello)
+	// get all endpoint
+	router.HandleFunc("/all", api.GetAll)
 
 	serverError := http.ListenAndServe(":8080", router)
 	if serverError != nil {
