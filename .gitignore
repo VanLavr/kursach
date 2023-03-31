@@ -1,2 +1,4 @@
 main.exe
 node_modules
+.prettierrc.json
+install.txt

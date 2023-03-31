@@ -1,0 +1,20 @@
+.form-buttons {
+    margin-top: 20px;
+}
+
+.form-buttons__log {
+    background-color: rgb(68, 132, 67);
+    margin-right: 10px;
+}
+
+.form-buttons__log:hover {
+    background-color: rgb(99, 193, 98);
+}
+
+.form-buttons__sign {
+    background-color: rgb(120, 64, 64);
+}
+
+.form-buttons__sign:hover {
+    background-color: rgb(147, 80, 80);
+}
