@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"web/configs"
 
 	"github.com/go-sql-driver/mysql"
 )
@@ -16,7 +17,7 @@ var (
 )
 
 func Connect() {
-	content, errcon := ioutil.ReadFile("D:\\Projects\\IVANLAVR\\kursach\\DBconnection\\config.json")
+	content, errcon := ioutil.ReadFile(configs.PathForDBConfigIvan)
 	if errcon != nil {
 		log.Fatal(errcon.Error())
 	}
