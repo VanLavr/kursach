@@ -2,20 +2,21 @@ package DBconnection
 
 import (
 	"database/sql"
-	"github.com/go-sql-driver/mysql"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
-	"fmt"
+
+	"github.com/go-sql-driver/mysql"
 )
 
 var (
-	DB *sql.DB
+	DB              *sql.DB
 	connectionError error
 )
 
 func Connect() {
-	content, errcon := ioutil.ReadFile("D:\\desktop2\\GoProjects\\web\\DBconnection\\config.json")
+	content, errcon := ioutil.ReadFile("D:\\Projects\\IVANLAVR\\kursach\\DBconnection\\config.json")
 	if errcon != nil {
 		log.Fatal(errcon.Error())
 	}
@@ -53,7 +54,7 @@ func Test() []string {
 		log.Printf("Test (cannot execute query): %v", err)
 	}
 	defer Rows.Close()
-	
+
 	for Rows.Next() {
 		var Name string
 		if scanErr := Rows.Scan(&Name); scanErr != nil {
