@@ -18,7 +18,7 @@ func main() {
 	log.Println("Listening and serving on 127.0.0.1:8080")
 
 	router := http.NewServeMux()
-	fileserver := http.FileServer(http.Dir("D:\\Projects\\IVANLAVR\\kursach\\static"))
+	fileserver := http.FileServer(http.Dir("D:\\desktop2\\GoProjects\\web\\static"))
 	router.Handle("/static/", http.StripPrefix("/static", fileserver))
 
 	// root endoint
