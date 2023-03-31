@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -48,23 +49,44 @@ func GetRoot(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAll(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 
-	if r.URL.Path != "/all" {
-		log.Printf("|handled \"all\"| |request=GET| |status: %v|", http.StatusNotFound)
-		http.NotFound(w, r)
-		return
+	switch r.Method {
+
+	case "GET":
+		// HANDLING GET REQUEST FOR ALL DATA
+		w.Header().Set("Content-Type", "application/json")
+
+		if r.URL.Path != "/all" {
+			log.Printf("|handled \"all\"| |request=GET| |status: %v|", http.StatusNotFound)
+			http.NotFound(w, r)
+			return
+		}
+
+		log.Printf("|handled \"all\"| |request=GET| |status: %v|", http.StatusOK)
+
+		catalog, catErr := DBconnection.GetAllProducts()
+		if catErr != nil {
+			log.Printf("[api/GetAll] cannot get all products (%v)", catErr)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(catErr.Error()))
+		}
+		json.NewEncoder(w).Encode(catalog)
+
+	case "POST":
+		// HANDLING POST REQUEST FOR ALL DATA
+		decoder := json.NewDecoder(r.Body)
+
+		var item DBconnection.Product
+
+		errDecoding := decoder.Decode(&item)
+		if errDecoding != nil {
+			log.Printf("[api/GetAll] cannot decode POST body (%v)", errDecoding)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errDecoding.Error()))
+		}
+
+		fmt.Println(item)
 	}
-
-	log.Printf("|handled \"all\"| |request=GET| |status: %v|", http.StatusOK)
-
-	catalog, catErr := DBconnection.GetAllProducts()
-	if catErr != nil {
-		log.Printf("[api/GetAll] cannot get all products (%v)", catErr)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(catErr.Error()))
-	}
-	json.NewEncoder(w).Encode(catalog)
 }
 
 func GetById(w http.ResponseWriter, r *http.Request) {
