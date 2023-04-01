@@ -9,6 +9,8 @@ import (
 	"strings"
 	"web/DBconnection"
 	"web/configs"
+	"fmt"
+	"reflect"
 )
 
 func GetHello(w http.ResponseWriter, r *http.Request) {
@@ -76,6 +78,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(catalog)
+		break
 
 	case "POST":
 		// HANDLING POST REQUEST FOR ALL DATA
@@ -90,24 +93,47 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(errDecoding.Error()))
 		}
 
-		lastIDarr, getErr := DBconnection.GetAllIDs()
-		if getErr != nil {
-			log.Printf("[api/GetAll] cannot get all ids (%v)", getErr)
+		createError := DBconnection.CreateItem(item)
+		if createError != nil {
+			log.Printf("[api/GetAll] cannot POST item (%v)", createError)
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(errDecoding.Error()))
-		}
-		lastID := lastIDarr[len(lastIDarr)-1]
-		lastID += 1
-
-		_, insertionError := DBconnection.DB.Query("INSERT INTO products(id, NameOfProduct, Category, Price) VALUES(?, ?, ?, ?)", lastID, item.Name, item.Category, item.Price)
-		if insertionError != nil {
-			log.Printf("[api/GetAll] cannot insert data (%v)", insertionError)
-			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(errDecoding.Error()))
+			w.Write([]byte(createError.Error()))
 		}
 
 		log.Printf("|handled \"all\"| |request=POST| |status: %v|", http.StatusOK)
 		w.WriteHeader(http.StatusOK)
+		break
+
+	case "DELETE":		
+		// HANDLING DELETE REQUEST FOR DATA BY ID
+		log.Printf("|handled \"all\"| |request=DELETE| |status: %v|", http.StatusOK)
+
+		decoder := json.NewDecoder(r.Body)
+
+		var itemID int
+		
+		errorDecoding := decoder.Decode(&itemID)
+		if errorDecoding != nil {
+			log.Printf("[api/GetAll] cannot decode DELETE body (%v)", errorDecoding)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errorDecoding.Error()))
+		}
+
+		ids, idErr := DBconnection.GetAllIDs()
+		if idErr != nil {
+			log.Printf("[api/GetAll] cannot read IDs (%v)", idErr)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(idErr.Error()))
+		}
+
+		
+		fmt.Println(ids)
+		fmt.Println(itemID)
+		fmt.Println(reflect.TypeOf(itemID))
+
+		 
+
+		break
 	}
 }
 
@@ -117,35 +143,41 @@ func GetById(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err.Error())
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	switch r.Method {
 
-	log.Printf("|handled \"all/:id\"| |request=GET| |status: %v|", http.StatusOK)
+	case "GET":
+		// HANDLING GET REQUEST FOR DATA BY ID
+		w.Header().Set("Content-Type", "application/json")
 
-	id := strings.TrimPrefix(r.URL.Path, "/all/")
-	intedID, e := strconv.Atoi(id)
-	if e != nil {
-		log.Fatal(e.Error())
-	}
+		log.Printf("|handled \"all/:id\"| |request=GET| |status: %v|", http.StatusOK)
 
-	flag := true
-	for _, v := range AllIDs {
-		if v == intedID {
-			flag = false
+		id := strings.TrimPrefix(r.URL.Path, "/all/")
+		intedID, e := strconv.Atoi(id)
+		if e != nil {
+			log.Fatal(e.Error())
 		}
-	}
-	if flag {
-		log.Printf("|handled \"all/:id\"| |request=GET| |status: %v|", http.StatusNotFound)
-		http.NotFound(w, r)
-		return
-	}
 
-	product, prErr := DBconnection.GetProductById(intedID)
-	if prErr != nil {
-		log.Printf("[api/GetById] cannot get %d product (%v)", id, prErr)
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(prErr.Error()))
-	}
+		flag := true
+		for _, v := range AllIDs {
+			if v == intedID {
+				flag = false
+			}
+		}
+		if flag {
+			log.Printf("|handled \"all/:id\"| |request=GET| |status: %v|", http.StatusNotFound)
+			http.NotFound(w, r)
+			return
+		}
 
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(product)
+		product, prErr := DBconnection.GetProductById(intedID)
+		if prErr != nil {
+			log.Printf("[api/GetById] cannot get %d product (%v)", id, prErr)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(prErr.Error()))
+		}
+
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(product)
+		break
+	}
 }

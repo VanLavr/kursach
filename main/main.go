@@ -1,7 +1,5 @@
 package main
 
-// http.FileServer(http.Dir("D:\\desktop2\\GoProjects\\web\\frontend"))
-
 import (
 	"fmt"
 	"log"
@@ -22,13 +20,16 @@ func main() {
 	fileserver := http.FileServer(http.Dir(configs.PathForFileServerIvan))
 	router.Handle("/static/", http.StripPrefix("/static", fileserver))
 
-	// root endoint
+	// [root] endoint
 	router.HandleFunc("/", api.GetRoot)
-	// hello endpoit
+
+	// [hello] endpoit
 	router.HandleFunc("/hello", api.GetHello)
-	// get all endpoint
+
+	// [get all and post] endpoint
 	router.HandleFunc("/all", api.GetAll)
-	// get by id endpoint
+
+	// [get by id] endpoint
 	router.HandleFunc("/all/", api.GetById)
 
 	serverError := http.ListenAndServe(":8080", router)

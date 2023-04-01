@@ -104,3 +104,21 @@ func GetProductById(idOfProd int) (Product, error) {
 
 	return prod[0], nil
 }
+
+func CreateItem(item Product) error {
+	lastIDarr, getErr := GetAllIDs()
+	if getErr != nil {
+		log.Printf("[CRUD/CreateItem] cannot get all ids (%v)", getErr)
+		return getErr
+	}
+	lastID := lastIDarr[len(lastIDarr)-1]
+	lastID += 1
+
+	_, insertionError := DB.Query("INSERT INTO products(id, NameOfProduct, Category, Price) VALUES(?, ?, ?, ?)", lastID, item.Name, item.Category, item.Price)
+	if insertionError != nil {
+		log.Printf("[CRUD/CreateItem] cannot insert data (%v)", insertionError)
+		return insertionError
+	}
+
+	return nil
+}
