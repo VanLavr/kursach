@@ -9,8 +9,6 @@ import (
 	"strings"
 	"web/DBconnection"
 	"web/configs"
-	"fmt"
-	"reflect"
 )
 
 func GetHello(w http.ResponseWriter, r *http.Request) {
@@ -82,6 +80,12 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 
 	case "POST":
 		// HANDLING POST REQUEST FOR ALL DATA
+		if r.URL.Path != "/all" {
+			log.Printf("|handled \"all\"| |request=POST| |status: %v|", http.StatusNotFound)
+			http.NotFound(w, r)
+			return
+		}
+
 		decoder := json.NewDecoder(r.Body)
 
 		var item DBconnection.Product
@@ -106,6 +110,12 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 
 	case "DELETE":		
 		// HANDLING DELETE REQUEST FOR DATA BY ID
+		if r.URL.Path != "/all" {
+			log.Printf("|handled \"all\"| |request=DELETE| |status: %v|", http.StatusNotFound)
+			http.NotFound(w, r)
+			return
+		}
+
 		log.Printf("|handled \"all\"| |request=DELETE| |status: %v|", http.StatusOK)
 
 		decoder := json.NewDecoder(r.Body)
@@ -119,19 +129,12 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(errorDecoding.Error()))
 		}
 
-		ids, idErr := DBconnection.GetAllIDs()
-		if idErr != nil {
-			log.Printf("[api/GetAll] cannot read IDs (%v)", idErr)
+		delErr := DBconnection.DeleteItem(itemID)
+		if delErr != nil {
+			log.Printf("[api/GetAll] cannot DELETE item (%v)", delErr)
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte(idErr.Error()))
+			w.Write([]byte(delErr.Error()))
 		}
-
-		
-		fmt.Println(ids)
-		fmt.Println(itemID)
-		fmt.Println(reflect.TypeOf(itemID))
-
-		 
 
 		break
 	}

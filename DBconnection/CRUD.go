@@ -1,6 +1,9 @@
 package DBconnection
 
-import "log"
+import (
+	"log"
+	"errors"
+)
 
 type Product struct {
 	ID       int
@@ -118,6 +121,32 @@ func CreateItem(item Product) error {
 	if insertionError != nil {
 		log.Printf("[CRUD/CreateItem] cannot insert data (%v)", insertionError)
 		return insertionError
+	}
+
+	return nil
+}
+
+func DeleteItem(itemID int) error {
+	ids, idErr := GetAllIDs()
+	if idErr != nil {
+		log.Printf("[CRUD/DeleteItem] cannot read IDs (%v)", idErr)
+		return idErr
+	}
+
+	flag := true
+	for _, v := range ids {
+		if v == itemID {
+			flag = false
+		}
+	}
+	if flag {
+		return errors.New("There is no such id")
+	}
+
+	_, deletionError := DB.Query("DELETE FROM products WHERE ID = ?", itemID)
+	if deletionError != nil {
+		log.Printf("[CRUD/DeleteItem] cannot insert data (%v)", deletionError)
+		return deletionError
 	}
 
 	return nil
