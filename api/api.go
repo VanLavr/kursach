@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -27,6 +26,8 @@ func GetHello(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(parseError.Error()))
 		log.Fatal(parseError.Error())
 	}
+
+	w.WriteHeader(http.StatusOK)
 	page.Execute(w, nil)
 }
 
@@ -45,6 +46,8 @@ func GetRoot(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(parseError.Error()))
 		log.Fatal(parseError.Error())
 	}
+
+	w.WriteHeader(http.StatusOK)
 	page.Execute(w, nil)
 }
 
@@ -70,6 +73,8 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(catErr.Error()))
 		}
+
+		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(catalog)
 
 	case "POST":
@@ -85,7 +90,24 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte(errDecoding.Error()))
 		}
 
-		fmt.Println(item)
+		lastIDarr, getErr := DBconnection.GetAllIDs()
+		if getErr != nil {
+			log.Printf("[api/GetAll] cannot get all ids (%v)", getErr)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errDecoding.Error()))
+		}
+		lastID := lastIDarr[len(lastIDarr)-1]
+		lastID += 1
+
+		_, insertionError := DBconnection.DB.Query("INSERT INTO products(id, NameOfProduct, Category, Price) VALUES(?, ?, ?, ?)", lastID, item.Name, item.Category, item.Price)
+		if insertionError != nil {
+			log.Printf("[api/GetAll] cannot insert data (%v)", insertionError)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errDecoding.Error()))
+		}
+
+		log.Printf("|handled \"all\"| |request=POST| |status: %v|", http.StatusOK)
+		w.WriteHeader(http.StatusOK)
 	}
 }
 
@@ -123,5 +145,7 @@ func GetById(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(prErr.Error()))
 	}
+
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(product)
 }
