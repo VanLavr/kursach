@@ -108,7 +108,7 @@ func GetAll(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		break
 
-	case "DELETE":		
+	case "DELETE":
 		// HANDLING DELETE REQUEST FOR DATA BY ID
 		if r.URL.Path != "/all" {
 			log.Printf("|handled \"all\"| |request=DELETE| |status: %v|", http.StatusNotFound)
